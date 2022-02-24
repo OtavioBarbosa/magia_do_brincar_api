@@ -5,8 +5,13 @@ const moment = require("moment")
 
 
 const user_exists = async (user) => {
-    let user = await mysql.queryAsync(`SELECT u.* FROM users AS u WHERE u.user = ?`, user)
-    return user
+    let register = await mysql.queryAsync(`SELECT u.* FROM users AS u WHERE u.user = ?`, user)
+    return register
+} 
+
+const people_exists = async (document) => {
+    let register = await mysql.queryAsync(`SELECT p.* FROM peoples AS p WHERE p.document = ?`, document)
+    return register
 } 
 
 route.get('/', async (request, response) => {
@@ -31,7 +36,19 @@ route.get('/:id', async (request, response) => {
 
 route.post('/', async (request, response) => {
 
-    const {user, password} = request.body
+    const {user, password, name, last_name, document, genre} = request.body
+
+    let validation_people = await people_exists(document)
+
+    let people = null
+
+    if(validation_people.length > 0){
+        people = validation_people
+    }
+    else{
+        people = await mysql.queryAsync(`INSERT INTO peoples (name, last_name, document, genre, created_at) VALUES (?, ?, ?, ?, ?)`, [name, last_name, document, genre, moment().format('YYYY-MM-DD HH:mm:ss')])
+    }
+
 
     let validation_user = await user_exists(user)
 
@@ -41,7 +58,7 @@ route.post('/', async (request, response) => {
         })
     }
 
-    let register = await mysql.queryAsync(`INSERT INTO users (user, password, created_at) VALUES (?, ?, ?)`, [user, password, moment().format('YYYY-MM-DD HH:mm:ss')])
+    let register = await mysql.queryAsync(`INSERT INTO users (user, password, people_id, created_at) VALUES (?, ?, ?, ?)`, [user, password, people.insertId ? people.insertId : people[0].id, moment().format('YYYY-MM-DD HH:mm:ss')])
     
     return response.status(201).json({
         data: register.insertId

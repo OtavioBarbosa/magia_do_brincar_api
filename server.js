@@ -78,11 +78,11 @@ const addresses = require('./app/routes/addresses')
 const emails = require('./app/routes/emails')
 const login = require('./app/routes/login')
 const payment_methods = require('./app/routes/payment_methods')
+const peoples = require('./app/routes/peoples')
 const permissions = require('./app/routes/permissions')
 const phones = require('./app/routes/phones')
 const users_has_permissions = require('./app/routes/users_has_permissions')
 const users = require('./app/routes/users')
-
 
 /**
  * @description routes
@@ -97,6 +97,7 @@ app.use(`/addresses`, addresses)
 app.use(`/emails`, emails)
 app.use(`/login`, login)
 app.use(`/payment_methods`, payment_methods)
+app.use(`/peoples`, peoples)
 app.use(`/permissions`, permissions)
 app.use(`/phones`, phones)
 app.use(`/users/permissions`, users_has_permissions)
