@@ -17,10 +17,10 @@ route.post('/', async (request, response) => {
 
     const {postal_code, public_place, number, district, city, uf, complement} = request.body
 
-    let endereco = await mysql.queryAsync(`INSERT INTO addresses (postal_code, public_place, number, district, city, uf, complement, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`, [postal_code, public_place, number, district, city, uf, complement, moment().format('YYYY-MM-DD HH:mm:ss')])
+    let address = await mysql.queryAsync(`INSERT INTO addresses (postal_code, public_place, number, district, city, uf, complement, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`, [postal_code, public_place, number, district, city, uf, complement, moment().format('YYYY-MM-DD HH:mm:ss')])
     
     return response.status(201).json({
-        data: endereco.insertId
+        data: address.insertId
     })
 
 })

@@ -75,12 +75,17 @@ const validationToken = (request, response, next) => {
  * @description Arquivos
  */
 const addresses = require('./app/routes/addresses')
+const characteristics = require('./app/routes/characteristics')
 const emails = require('./app/routes/emails')
 const login = require('./app/routes/login')
 const payment_methods = require('./app/routes/payment_methods')
 const peoples = require('./app/routes/peoples')
 const permissions = require('./app/routes/permissions')
 const phones = require('./app/routes/phones')
+const schedules = require('./app/routes/schedules')
+const services_has_characteristics = require('./app/routes/services_has_characteristics')
+const services = require('./app/routes/services')
+const users_has_addresses = require('./app/routes/users_has_addresses')
 const users_has_permissions = require('./app/routes/users_has_permissions')
 const users = require('./app/routes/users')
 
@@ -94,13 +99,18 @@ app.get(`/`, (request, response) => {
 })
 
 app.use(`/addresses`, addresses)
+app.use(`/characteristics`, characteristics)
 app.use(`/emails`, emails)
 app.use(`/login`, login)
 app.use(`/payment_methods`, payment_methods)
 app.use(`/peoples`, peoples)
 app.use(`/permissions`, permissions)
 app.use(`/phones`, phones)
-app.use(`/users/permissions`, users_has_permissions)
+app.use(`/schedules`, schedules)
+app.use(`/services_has_characteristics`, services_has_characteristics)
+app.use(`/services`, services)
+app.use(`/users_has_addresses`, users_has_addresses)
+app.use(`/users_has_permissions`, users_has_permissions)
 app.use(`/users`, users)
 
 

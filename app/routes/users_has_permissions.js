@@ -17,10 +17,10 @@ route.post('/', async (request, response) => {
 
     const {user_id, permission_id} = request.body
 
-    let registro = await mysql.queryAsync(`INSERT INTO users_has_permissions (user_id, permission_id, created_at) VALUES (?, ?, ?)`, [user_id, permission_id, moment().format('YYYY-MM-DD HH:mm:ss')])
+    let register = await mysql.queryAsync(`INSERT INTO users_has_permissions (user_id, permission_id, created_at) VALUES (?, ?, ?)`, [user_id, permission_id, moment().format('YYYY-MM-DD HH:mm:ss')])
     
     return response.status(201).json({
-        data: registro.insertId
+        data: register.insertId
     })
 
 })

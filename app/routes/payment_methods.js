@@ -17,10 +17,10 @@ route.post('/', async (request, response) => {
 
     const {payment_method} = request.body
 
-    let registro = await mysql.queryAsync(`INSERT INTO payment_methods (payment_method, created_at) VALUES (?, ?)`, [payment_method, moment().format('YYYY-MM-DD HH:mm:ss')])
+    let register = await mysql.queryAsync(`INSERT INTO payment_methods (payment_method, created_at) VALUES (?, ?)`, [payment_method, moment().format('YYYY-MM-DD HH:mm:ss')])
     
     return response.status(201).json({
-        data: registro.insertId
+        data: register.insertId
     })
 
 })
