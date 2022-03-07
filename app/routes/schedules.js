@@ -3,9 +3,26 @@ const route = express.Router()
 const { mysql } = require("../helpers/mysql")
 const moment = require("moment")
 
+const user_permissions = async (user) => {
+    return await mysql.queryAsync(`
+        SELECT up.*, p.permission FROM users_has_permissions AS up
+        INNER JOIN permissions AS p ON p.id = up.permission_id 
+        WHERE up.deleted_at IS NULL AND p.deleted_at IS NULL AND up.user_id = ?
+    `, [user])
+}
+
 route.get('/', async (request, response) => {
 
-    let schedules = await mysql.queryAsync(`SELECT s.* FROM schedules AS s WHERE s.deleted_at IS NULL`)
+    let schedules = null 
+
+    let permissions = await user_permissions(request.user)
+
+    if(permissions.find(p => p.permission === 'Administrador')){
+        schedules = await mysql.queryAsync(`SELECT s.* FROM schedules AS s WHERE s.deleted_at IS NULL`)
+    }
+    else{
+        schedules = await mysql.queryAsync(`SELECT s.* FROM schedules AS s WHERE s.deleted_at IS NULL AND s.user_id = ?`, [request.user])
+    }
     
     return response.status(200).json({
         data: schedules
