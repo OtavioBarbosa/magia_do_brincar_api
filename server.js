@@ -98,6 +98,8 @@ app.get(`/`, (request, response) => {
     })
 })
 
+app.use('/images', express.static(__dirname + '/app/images'));
+
 app.use(`/addresses`, addresses)
 app.use(`/characteristics`, characteristics)
 app.use(`/emails`, emails)
