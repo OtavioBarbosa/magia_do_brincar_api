@@ -29,8 +29,8 @@ route.post('/', async (request, response) => {
         return response.status(200).json({
             data: {
                 token: jwt.sign(register[0].id, process.env.SECRET), 
-                user: register, 
-                people: people,
+                user: register[0], 
+                people: people[0],
                 permissions: permissions
             }
         })
