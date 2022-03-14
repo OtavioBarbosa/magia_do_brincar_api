@@ -36,7 +36,7 @@ route.get('/:id', async (request, response) => {
 
 route.post('/', async (request, response) => {
 
-    const {user, password, name, last_name, document, genre, permissions} = request.body
+    const {user, password, name, last_name, document, birth_date, genre, permissions} = request.body
 
     let validation_people = await people_exists(document)
 
@@ -46,7 +46,7 @@ route.post('/', async (request, response) => {
         people = validation_people
     }
     else{
-        people = await mysql.queryAsync(`INSERT INTO peoples (name, last_name, document, genre, created_at) VALUES (?, ?, ?, ?, ?)`, [name, last_name, document, genre, moment().format('YYYY-MM-DD HH:mm:ss')])
+        people = await mysql.queryAsync(`INSERT INTO peoples (name, last_name, document, birth_date, genre, created_at) VALUES (?, ?, ?, ?, ?, ?)`, [name, last_name, document, birth_date, genre, moment().format('YYYY-MM-DD HH:mm:ss')])
     }
 
 

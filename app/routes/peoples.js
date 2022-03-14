@@ -31,7 +31,7 @@ route.get('/:id', async (request, response) => {
 
 route.post('/', async (request, response) => {
 
-    const {name, last_name, document, genre} = request.body
+    const {name, last_name, document, birth_date, genre} = request.body
 
     let validation_people = await people_exists(document)
 
@@ -41,7 +41,7 @@ route.post('/', async (request, response) => {
         })
     }
 
-    let register = await mysql.queryAsync(`INSERT INTO peoples (name, last_name, document, genre, created_at) VALUES (?, ?, ?, ?, ?)`, [name, last_name, document, genre, moment().format('YYYY-MM-DD HH:mm:ss')])
+    let register = await mysql.queryAsync(`INSERT INTO peoples (name, last_name, document, birth_date, genre, created_at) VALUES (?, ?, ?, ?, ?, ?)`, [name, last_name, document, birth_date, genre, moment().format('YYYY-MM-DD HH:mm:ss')])
     
     return response.status(201).json({
         data: register.insertId
@@ -51,7 +51,7 @@ route.post('/', async (request, response) => {
 
 route.put('/:id', async (request, response) => {
 
-    const {name, last_name, document, genre} = request.body
+    const {name, last_name, document, birth_date, genre} = request.body
 
     let validation_people = await people_exists(document)
 
@@ -61,7 +61,7 @@ route.put('/:id', async (request, response) => {
         })
     }
 
-    await mysql.queryAsync(`UPDATE peoples SET name = ?, last_name = ?, document = ?, genre = ?, updated_at = ? WHERE id = ?`, [name, last_name, document, genre, moment().format('YYYY-MM-DD HH:mm:ss'), request.params.id])
+    await mysql.queryAsync(`UPDATE peoples SET name = ?, last_name = ?, document = ?, birth_date = ?, genre = ?, updated_at = ? WHERE id = ?`, [name, last_name, document, birth_date, genre, moment().format('YYYY-MM-DD HH:mm:ss'), request.params.id])
     
     return response.status(200).json({
         data: parseInt(request.params.id)
