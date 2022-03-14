@@ -14,6 +14,11 @@ const people_exists = async (document) => {
     return register
 } 
 
+const identify_user = async (user, password) => {
+    let register = await mysql.queryAsync(`SELECT u.* FROM users AS u WHERE u.id = ? AND u.password = ?`, [user, password])
+    return register
+}
+
 route.get('/', async (request, response) => {
 
     let users = await mysql.queryAsync(`SELECT u.id, u.user, u.created_at, u.updated_at FROM users AS u WHERE u.deleted_at IS NULL`)
@@ -98,6 +103,26 @@ route.delete('/:id', async (request, response) => {
     return response.status(204).json({
         data: parseInt(request.params.id)
     })
+})
+
+route.post('/change_password', async (request, response) => {
+
+    const {old_password, new_password} = request.body
+    
+    let user = await identify_user(request.user, old_password)
+
+    if(user.length === 0){
+        return response.status(404).json({
+            data: `Usuário não encontrado, verifique se sua senha antiga está correta.`
+        })
+    }
+
+    await mysql.queryAsync(`UPDATE users SET password = ?, updated_at = ? WHERE id = ?`, [new_password, moment().format('YYYY-MM-DD HH:mm:ss'), user[0].id])
+    
+    return response.status(200).json({
+        data: parseInt(user[0].id)
+    })
+
 })
 
 
