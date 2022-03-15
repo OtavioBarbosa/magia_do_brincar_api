@@ -41,10 +41,11 @@ route.post("/", async (request, response) => {
 
     let addresses = await mysql.queryAsync(
       `
-        SELECT a.* FROM users_has_addresses uha 
-        INNER JOIN addresses a ON uha.address_id = a.id 
-        WHERE uha.user_id = ? 
-        AND a.deleted_at IS NULL;`,
+      SELECT a.*, uha.description 
+      FROM users_has_addresses uha 
+      INNER JOIN addresses a ON uha.address_id = a.id 
+      WHERE uha.user_id = ? 
+      AND a.deleted_at IS NULL;`,
       [register[0].people_id]
     );
 
