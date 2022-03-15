@@ -86,7 +86,9 @@ const schedules = require('./app/routes/schedules')
 const services_has_characteristics = require('./app/routes/services_has_characteristics')
 const services = require('./app/routes/services')
 const users_has_addresses = require('./app/routes/users_has_addresses')
+const users_has_emails = require('./app/routes/users_has_emails')
 const users_has_permissions = require('./app/routes/users_has_permissions')
+const users_has_phones = require('./app/routes/users_has_phones')
 const users = require('./app/routes/users')
 
 /**
@@ -112,7 +114,9 @@ app.use(`/schedules`, schedules)
 app.use(`/services_has_characteristics`, services_has_characteristics)
 app.use(`/services`, services)
 app.use(`/users_has_addresses`, users_has_addresses)
+app.use(`/users_has_emails`, users_has_emails)
 app.use(`/users_has_permissions`, users_has_permissions)
+app.use(`/users_has_phones`, users_has_phones)
 app.use(`/users`, users)
 
 

@@ -36,7 +36,7 @@ route.get('/addresses', async (request, response) => {
         SELECT a.*, ua.description 
         FROM users_has_addresses AS ua 
         INNER JOIN addresses AS a ON ua.address_id = a.id 
-        WHERE ua.user_id = ? AND a.deleted_at IS NULL
+        WHERE ua.user_id = ? AND a.deleted_at IS NULL AND ua.deleted_at IS NULL
     `, [request.user])
     
     return response.status(200).json({
@@ -51,12 +51,26 @@ route.get('/phones', async (request, response) => {
         SELECT p.*, up.description
         FROM users_has_phones AS up 
         INNER JOIN phones AS p ON up.phone_id = p.id 
-        WHERE up.user_id = ? 
-        AND p.deleted_at IS NULL
+        WHERE up.user_id = ? AND p.deleted_at IS NULL AND up.deleted_at IS NULL
     `, [request.user])
     
     return response.status(200).json({
         data: phones
+    })
+
+})
+
+route.get('/emails', async (request, response) => {
+
+    let emails = await mysql.queryAsync(`
+        SELECT e.*, ue.description
+        FROM users_has_emails AS ue 
+        INNER JOIN emails AS e ON ue.email_id = e.id 
+        WHERE ue.user_id = ? AND e.deleted_at IS NULL AND ue.deleted_at IS NULL
+    `, [request.user])
+    
+    return response.status(200).json({
+        data: emails
     })
 
 })
