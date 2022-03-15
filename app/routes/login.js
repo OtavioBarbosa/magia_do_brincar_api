@@ -30,33 +30,12 @@ route.post("/", async (request, response) => {
       [register[0].people_id]
     );
 
-    let phones = await mysql.queryAsync(
-      `
-        SELECT p.* FROM users_has_phones uhp 
-        INNER JOIN phones p ON uhp.phone_id = p.id 
-        WHERE uhp.user_id = ? 
-        AND p.deleted_at IS NULL`,
-      [register[0].people_id]
-    );
-
-    let addresses = await mysql.queryAsync(
-      `
-      SELECT a.*, uha.description 
-      FROM users_has_addresses uha 
-      INNER JOIN addresses a ON uha.address_id = a.id 
-      WHERE uha.user_id = ? 
-      AND a.deleted_at IS NULL;`,
-      [register[0].people_id]
-    );
-
     return response.status(200).json({
       data: {
         token: jwt.sign(register[0].id, process.env.SECRET),
         user: register[0],
         people: people[0],
-        permissions: permissions,
-        phones: phones,
-        addresses: addresses,
+        permissions: permissions
       },
     });
   }

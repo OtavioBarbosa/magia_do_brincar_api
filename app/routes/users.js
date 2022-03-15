@@ -29,6 +29,38 @@ route.get('/', async (request, response) => {
 
 })
 
+
+route.get('/addresses', async (request, response) => {
+
+    let addresses = await mysql.queryAsync(`
+        SELECT a.*, ua.description 
+        FROM users_has_addresses AS ua 
+        INNER JOIN addresses AS a ON ua.address_id = a.id 
+        WHERE ua.user_id = ? AND a.deleted_at IS NULL
+    `, [request.user])
+    
+    return response.status(200).json({
+        data: addresses
+    })
+
+})
+
+route.get('/phones', async (request, response) => {
+
+    let phones = await mysql.queryAsync(`
+        SELECT p.*, up.description
+        FROM users_has_phones AS up 
+        INNER JOIN phones AS p ON up.phone_id = p.id 
+        WHERE up.user_id = ? 
+        AND p.deleted_at IS NULL
+    `, [request.user])
+    
+    return response.status(200).json({
+        data: phones
+    })
+
+})
+
 route.get('/:id', async (request, response) => {
 
     let user = await mysql.queryAsync(`SELECT u.* FROM users AS u WHERE u.deleted_at IS NULL AND u.id = ?`, [request.params.id])
