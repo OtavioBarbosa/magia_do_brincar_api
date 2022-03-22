@@ -55,13 +55,21 @@ route.put('/:id', async (request, response) => {
 
     let validation_people = await people_exists(document)
 
-    if(validation_people.length > 0 && validation_people[0].people !== people){
+    if(validation_people.length > 0 && validation_people[0].id !== parseInt(request.params.id)){
         return response.status(500).json({
             data: `Pessoa já existe`
         })
     }
 
-    await mysql.queryAsync(`UPDATE peoples SET name = ?, last_name = ?, document = ?, birth_date = ?, genre = ?, updated_at = ? WHERE id = ?`, [name, last_name, document, birth_date, genre, moment().format('YYYY-MM-DD HH:mm:ss'), request.params.id])
+    await mysql.queryAsync(`UPDATE peoples SET name = ?, last_name = ?, document = ?, birth_date = ?, genre = ?, updated_at = ? WHERE id = ?`, [
+        name ? name : validation_people[0].name, 
+        last_name ? last_name : validation_people[0].last_name, 
+        document ? document : validation_people[0].document, 
+        birth_date ? birth_date : validation_people[0].birth_date, 
+        genre ? genre : validation_people[0].genre, 
+        moment().format('YYYY-MM-DD HH:mm:ss'), 
+        request.params.id
+    ])
     
     return response.status(200).json({
         data: parseInt(request.params.id)
