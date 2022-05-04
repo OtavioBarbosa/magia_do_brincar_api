@@ -19,12 +19,14 @@ route.get('/', async (request, response) => {
 
 route.post('/', async (request, response) => {
 
-    let {number, ddd, type} = request.body
+    let {number, ddd, type, description} = request.body
 
     number = remove_text_phone(number)
     ddd = remove_text_phone(ddd)
 
     let phone = await mysql.queryAsync(`INSERT INTO phones (phone, ddd, type, created_at) VALUES (?, ?, ?, ?)`, [number, ddd, type, moment().format('YYYY-MM-DD HH:mm:ss')])
+    
+    await mysql.queryAsync(`INSERT INTO users_has_phones (user_id, phone_id, description, created_at) VALUES (?, ?, ?, ?)`, [request.user, phone.insertId, description, moment().format('YYYY-MM-DD HH:mm:ss')])
     
     return response.status(201).json({
         data: phone.insertId
