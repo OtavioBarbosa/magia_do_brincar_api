@@ -24,7 +24,7 @@ route.post('/', async (request, response) => {
     number = remove_text_phone(number)
     ddd = remove_text_phone(ddd)
 
-    let phone = await mysql.queryAsync(`INSERT INTO phones (number, ddd, type, created_at) VALUES (?, ?, ?, ?)`, [number, ddd, type, moment().format('YYYY-MM-DD HH:mm:ss')])
+    let phone = await mysql.queryAsync(`INSERT INTO phones (phone, ddd, type, created_at) VALUES (?, ?, ?, ?)`, [number, ddd, type, moment().format('YYYY-MM-DD HH:mm:ss')])
     
     return response.status(201).json({
         data: phone.insertId
@@ -39,7 +39,7 @@ route.put('/:id', async (request, response) => {
     number = remove_text_phone(number)
     ddd = remove_text_phone(ddd)
 
-    await mysql.queryAsync(`UPDATE phones SET number = ?, ddd = ?, type = ?, updated_at = ? WHERE id = ?`, [number, ddd, type, moment().format('YYYY-MM-DD HH:mm:ss'), request.params.id])
+    await mysql.queryAsync(`UPDATE phones SET phone = ?, ddd = ?, type = ?, updated_at = ? WHERE id = ?`, [number, ddd, type, moment().format('YYYY-MM-DD HH:mm:ss'), request.params.id])
     
     return response.status(200).json({
         data: parseInt(request.params.id)
