@@ -30,6 +30,71 @@ route.get('/', async (request, response) => {
 
 })
 
+route.get('/:id', async (request, response) => {
+
+    let schedule = null 
+
+    let permissions = await user_permissions(request.user)
+
+    if(permissions.find(p => p.permission === 'Administrador')){
+        schedule = await mysql.queryAsync(`SELECT s.* FROM schedules AS s WHERE s.id = ? AND s.deleted_at IS NULL`, [request.params.id])
+    }
+    else{
+        schedule = await mysql.queryAsync(`SELECT s.* FROM schedules AS s WHERE s.id = ? AND s.deleted_at IS NULL AND s.user_id = ?`, [request.params.id, request.user])
+    }
+
+    if(schedule.length > 0){
+        schedule = schedule[0]
+
+        let user = await mysql.queryAsync(`
+            SELECT p.*, s.user_id
+            FROM schedules AS s 
+            INNER JOIN users AS u ON s.user_id = u.id
+            INNER JOIN peoples AS p ON u.people_id = p.id
+            WHERE s.id = ?
+        `, [request.params.id])
+
+        let service = await mysql.queryAsync(`
+            SELECT s.*, ssc.id AS schedules_has_services_has_characteristics, sc.id AS services_has_characteristics, 
+            se.service, se.description, se.image
+            FROM schedules AS s 
+            INNER JOIN schedules_has_services_has_characteristics AS ssc ON ssc.scheduling_id = s.id
+            INNER JOIN services_has_characteristics AS sc ON ssc.service_has_characteristic_id = sc.id
+            INNER JOIN services AS se ON sc.service_id = se.id
+            WHERE s.id = ?
+        `, [request.params.id])
+
+        let characteristics = await mysql.queryAsync(`
+            SELECT c.id AS characteristic_id, c.characteristic
+            FROM schedules AS s 
+            INNER JOIN schedules_has_services_has_characteristics AS ssc ON ssc.scheduling_id = s.id
+            INNER JOIN services_has_characteristics AS sc ON ssc.service_has_characteristic_id = sc.id
+            INNER JOIN characteristics AS c ON sc.characteristic_id = c.id
+            WHERE s.id = ?
+        `, [request.params.id])
+        
+        let children = await mysql.queryAsync(`
+            SELECT suc.id AS schedules_has_users_has_children, uc.id AS users_has_children, 
+            c.id AS child_id, c.name, c.last_name, c.birth_date, c.genre, c.description
+            FROM schedules_has_users_has_children AS suc
+            INNER JOIN users_has_children AS uc ON suc.user_has_child_id = uc.id
+            INNER JOIN children AS c ON uc.child_id = c.id
+            WHERE suc.scheduling_id = ?
+        `, [request.params.id])
+
+        schedule.user = user.length > 0 ? user[0] : null
+        schedule.service = service.length > 0 ? service[0] : null
+        schedule.characteristics = characteristics
+        schedule.children = children
+
+    }
+    
+    return response.status(200).json({
+        data: schedule
+    })
+
+})
+
 route.post('/', async (request, response) => {
 
     const {user_id, service_id, user_has_address_id, payment_method_id, start_date, end_date, payday, number_children, description_children, service_description, services_has_characteristics, users_has_children} = request.body
