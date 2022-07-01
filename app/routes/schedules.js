@@ -55,7 +55,7 @@ route.get('/:id', async (request, response) => {
         `, [request.params.id])
 
         let service = await mysql.queryAsync(`
-            SELECT s.*, ssc.id AS schedules_has_services_has_characteristics, sc.id AS services_has_characteristics, 
+            SELECT ssc.id AS schedules_has_services_has_characteristics, sc.id AS services_has_characteristics, 
             se.service, se.description, se.image
             FROM schedules AS s 
             INNER JOIN schedules_has_services_has_characteristics AS ssc ON ssc.scheduling_id = s.id
