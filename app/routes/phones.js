@@ -36,12 +36,14 @@ route.post('/', async (request, response) => {
 
 route.put('/:id', async (request, response) => {
 
-    let {number, ddd, type} = request.body
+    let {number, ddd, type, description} = request.body
 
     number = remove_text_phone(number)
     ddd = remove_text_phone(ddd)
 
     await mysql.queryAsync(`UPDATE phones SET phone = ?, ddd = ?, type = ?, updated_at = ? WHERE id = ?`, [number, ddd, type, moment().format('YYYY-MM-DD HH:mm:ss'), request.params.id])
+    
+    await mysql.queryAsync(`UPDATE users_has_phones SET description = ?, updated_at = ? WHERE user_id = ? AND phone_id = ?`, [description, moment().format('YYYY-MM-DD HH:mm:ss'), request.user, request.params.id])
     
     return response.status(200).json({
         data: parseInt(request.params.id)

@@ -15,10 +15,12 @@ route.get('/', async (request, response) => {
 
 route.post('/', async (request, response) => {
 
-    const {postal_code, public_place, number, district, city, uf, complement} = request.body
+    const {postal_code, public_place, number, district, city, uf, complement, description} = request.body
 
     let address = await mysql.queryAsync(`INSERT INTO addresses (postal_code, public_place, number, district, city, uf, complement, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`, [postal_code, public_place, number, district, city, uf, complement, moment().format('YYYY-MM-DD HH:mm:ss')])
     
+    await mysql.queryAsync(`INSERT INTO users_has_addresses (user_id, address_id, description, created_at) VALUES (?, ?, ?, ?)`, [request.user, address.insertId, description, moment().format('YYYY-MM-DD HH:mm:ss')])
+
     return response.status(201).json({
         data: address.insertId
     })
@@ -27,10 +29,12 @@ route.post('/', async (request, response) => {
 
 route.put('/:id', async (request, response) => {
 
-    const {postal_code, public_place, number, district, city, uf, complement} = request.body
+    const {postal_code, public_place, number, district, city, uf, complement, description} = request.body
 
     await mysql.queryAsync(`UPDATE addresses SET postal_code = ?, public_place = ?, number = ?, district = ?, city = ?, uf = ?, complement = ?, updated_at = ? WHERE id = ?`, [postal_code, public_place, number, district, city, uf, complement, moment().format('YYYY-MM-DD HH:mm:ss'), request.params.id])
     
+    await mysql.queryAsync(`UPDATE users_has_addresses SET description = ?, updated_at = ? WHERE user_id = ? AND address_id = ?`, [description, moment().format('YYYY-MM-DD HH:mm:ss'), request.user, request.params.id])
+
     return response.status(200).json({
         data: parseInt(request.params.id)
     })
