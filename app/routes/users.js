@@ -75,6 +75,21 @@ route.get('/emails', async (request, response) => {
 
 })
 
+route.get('/children', async (request, response) => {
+
+    let children = await mysql.queryAsync(`
+        SELECT c.*, uc.type
+        FROM users_has_children AS uc 
+        INNER JOIN children AS c ON uc.child_id = c.id 
+        WHERE uc.user_id = ? AND c.deleted_at IS NULL AND uc.deleted_at IS NULL
+    `, [request.user])
+    
+    return response.status(200).json({
+        data: children
+    })
+
+})
+
 route.get('/:id', async (request, response) => {
 
     let user = await mysql.queryAsync(`SELECT u.* FROM users AS u WHERE u.deleted_at IS NULL AND u.id = ?`, [request.params.id])

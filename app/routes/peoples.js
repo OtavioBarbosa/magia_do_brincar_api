@@ -24,7 +24,7 @@ route.get('/:id', async (request, response) => {
     let people = await mysql.queryAsync(`SELECT p.* FROM peoples AS p WHERE p.deleted_at IS NULL AND p.id = ?`, [request.params.id])
     
     return response.status(200).json({
-        data: people
+        data: people.length == 1 ? people[0] : {}
     })
 
 })

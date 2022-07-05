@@ -15,10 +15,12 @@ route.get('/', async (request, response) => {
 
 route.post('/', async (request, response) => {
 
-    const {email} = request.body
+    const {email, description} = request.body
 
     let register = await mysql.queryAsync(`INSERT INTO emails (email, created_at) VALUES (?, ?)`, [email, moment().format('YYYY-MM-DD HH:mm:ss')])
     
+    await mysql.queryAsync(`INSERT INTO users_has_emails (user_id, email_id, description, created_at) VALUES (?, ?, ?, ?)`, [request.user, register.insertId, description, moment().format('YYYY-MM-DD HH:mm:ss')])
+
     return response.status(201).json({
         data: register.insertId
     })
@@ -27,10 +29,12 @@ route.post('/', async (request, response) => {
 
 route.put('/:id', async (request, response) => {
 
-    const {email} = request.body
+    const {email, description} = request.body
 
     await mysql.queryAsync(`UPDATE emails SET email = ?, updated_at = ? WHERE id = ?`, [email, moment().format('YYYY-MM-DD HH:mm:ss'), request.params.id])
     
+    await mysql.queryAsync(`UPDATE users_has_emails SET description = ?, updated_at = ? WHERE user_id = ? AND email_id = ?`, [description, moment().format('YYYY-MM-DD HH:mm:ss'), request.user, request.params.id])
+
     return response.status(200).json({
         data: parseInt(request.params.id)
     })
