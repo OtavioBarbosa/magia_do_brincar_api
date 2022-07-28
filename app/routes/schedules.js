@@ -81,11 +81,19 @@ route.get('/:id', async (request, response) => {
             INNER JOIN children AS c ON uc.child_id = c.id
             WHERE suc.scheduling_id = ?
         `, [request.params.id])
+        
+        let payment_method = await mysql.queryAsync(`
+            SELECT pm.*
+            FROM schedules AS s
+            INNER JOIN payment_methods AS pm ON pm.id = s.payment_method_id
+            WHERE s.id = ?
+        `, [request.params.id])
 
         schedule.user = user.length > 0 ? user[0] : null
         schedule.service = service.length > 0 ? service[0] : null
         schedule.characteristics = characteristics
         schedule.children = children
+        schedule.payment_method = payment_method.length > 0 ? payment_method[0].payment_method : null
 
     }
     
