@@ -105,9 +105,9 @@ route.get('/:id', async (request, response) => {
 
 route.post('/', async (request, response) => {
 
-    const {user_id, service_id, user_has_address_id, payment_method_id, start_date, end_date, payday, number_children, description_children, service_description, services_has_characteristics, users_has_children} = request.body
+    const {user_id, service_id, user_has_address_id, payment_method_id, type, start_date, end_date, payday, number_children, description_children, service_description, services_has_characteristics, users_has_children} = request.body
 
-    let register = await mysql.queryAsync(`INSERT INTO schedules (user_id, service_id, user_has_address_id, payment_method_id, start_date, end_date, payday, number_children, description_children, service_description, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`, [user_id, service_id, user_has_address_id, payment_method_id, start_date, end_date, payday, number_children, description_children, service_description, moment().format('YYYY-MM-DD HH:mm:ss')])
+    let register = await mysql.queryAsync(`INSERT INTO schedules (user_id, service_id, user_has_address_id, payment_method_id, type, start_date, end_date, payday, number_children, description_children, service_description, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`, [user_id, service_id, user_has_address_id, payment_method_id, type, start_date, end_date, payday, number_children, description_children, service_description, moment().format('YYYY-MM-DD HH:mm:ss')])
     
     if(services_has_characteristics && typeof services_has_characteristics === 'object'){
         services_has_characteristics.map(async (sc) => {
@@ -129,9 +129,9 @@ route.post('/', async (request, response) => {
 
 route.put('/:id', async (request, response) => {
 
-    const {user_id, service_id, user_has_address_id, payment_method_id, start_date, end_date, payday, number_children, description_children, service_description} = request.body
+    const {user_id, service_id, user_has_address_id, payment_method_id, type, start_date, end_date, payday, number_children, description_children, service_description} = request.body
 
-    await mysql.queryAsync(`UPDATE schedules SET user_id = ?, service_id = ?, user_has_address_id = ?, payment_method_id = ?, start_date = ?, end_date = ?, payday = ?, number_children = ?, description_children = ?, service_description = ?, updated_at = ? WHERE id = ?`, [user_id, service_id, user_has_address_id, payment_method_id, start_date, end_date, payday, number_children, description_children, service_description, moment().format('YYYY-MM-DD HH:mm:ss'), request.params.id])
+    await mysql.queryAsync(`UPDATE schedules SET user_id = ?, service_id = ?, user_has_address_id = ?, payment_method_id = ?, type = ?, start_date = ?, end_date = ?, payday = ?, number_children = ?, description_children = ?, service_description = ?, updated_at = ? WHERE id = ?`, [user_id, service_id, user_has_address_id, payment_method_id, type, start_date, end_date, payday, number_children, description_children, service_description, moment().format('YYYY-MM-DD HH:mm:ss'), request.params.id])
     
     return response.status(200).json({
         data: parseInt(request.params.id)
